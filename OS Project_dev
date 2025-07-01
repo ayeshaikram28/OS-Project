@@ -1,0 +1,162 @@
+import java.util.*;
+
+// Product Class
+class Product {
+    private int id;
+    private String name;
+    private double price;
+
+    public Product(int id, String name, double price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public double getPrice() { return price; }
+
+    public void displayProduct() {
+        System.out.printf("%-5d %-20s $%.2f\n", id, name, price);
+    }
+}
+
+// Cart Class
+class Cart {
+    private List<Product> cartItems = new ArrayList<>();
+
+    public void addProduct(Product product) {
+        cartItems.add(product);
+        System.out.println("Added to Cart: " + product.getName());
+    }
+
+    public void viewCart() {
+        if (cartItems.isEmpty()) {
+            System.out.println("Cart is Empty.");
+        } else {
+            System.out.println("\n------ Your Cart ------");
+            System.out.printf("%-5s %-20s %s\n", "ID", "Product Name", "Price");
+            for (Product p : cartItems) {
+                p.displayProduct();
+            }
+            System.out.println("-----------------------");
+            System.out.printf("Total: $%.2f\n", calculateTotal());
+            System.out.println("-----------------------\n");
+        }
+    }
+
+    public double calculateTotal() {
+        double total = 0.0;
+        for (Product p : cartItems) {
+            total += p.getPrice();
+        }
+        return total;
+    }
+
+    public boolean isEmpty() {
+        return cartItems.isEmpty();
+    }
+
+    public void clearCart() {
+        cartItems.clear();
+    }
+}
+
+// User Class
+class User {
+    private String username;
+    private String password;
+    private Cart cart;
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.cart = new Cart();
+    }
+
+    public String getUsername() { return username; }
+    public String getPassword() { return password; }
+    public Cart getCart() { return cart; }
+}
+
+// Main Class - Partial
+public class EcommerceShoppingSystem {
+    private static List<User> users = new ArrayList<>();
+    private static Scanner sc = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        Product[] products = {
+            new Product(1, "Laptop", 800.00),
+            new Product(2, "Smartphone", 500.00),
+            new Product(3, "Headphones", 120.50),
+            new Product(4, "Smartwatch", 200.99),
+            new Product(5, "Backpack", 75.25),
+            new Product(6, "Tablet", 350.00),
+            new Product(7, "Gaming Mouse", 49.99),
+            new Product(8, "Keyboard", 89.50),
+            new Product(9, "Monitor", 250.75),
+            new Product(10, "External Hard Drive", 150.00)
+        };
+
+        int choice;
+        do {
+            System.out.println("\n========= Welcome to E-Commerce System =========");
+            System.out.println("1. Register");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+                case 1:
+                    registerUser();
+                    break;
+                case 2:
+                    User loggedInUser = loginUser();
+                    if (loggedInUser != null) {
+                        // User menu continues in second half
+                    }
+                    break;
+                case 3:
+                    System.out.println("Thank you for visiting! Goodbye.");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Try again.");
+            }
+        } while (choice != 3);
+    }
+
+    private static void registerUser() {
+        System.out.print("Enter new username: ");
+        String username = sc.nextLine();
+        System.out.print("Enter new password: ");
+        String password = sc.nextLine();
+
+        for (User u : users) {
+            if (u.getUsername().equals(username)) {
+                System.out.println("Username already exists. Try a different one.");
+                return;
+            }
+        }
+
+        users.add(new User(username, password));
+        System.out.println("Registration successful!");
+    }
+
+    private static User loginUser() {
+        System.out.print("Enter username: ");
+        String username = sc.nextLine();
+        System.out.print("Enter password: ");
+        String password = sc.nextLine();
+
+        for (User u : users) {
+            if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
+                System.out.println("Login successful! Welcome " + username + ".");
+                return u;
+            }
+        }
+        System.out.println("Invalid username or password.");
+        return null;
+    }
+}
